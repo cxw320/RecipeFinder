@@ -3,6 +3,7 @@ package com.example.myrecipe2.repository
 import android.util.Log
 import com.example.myrecipe2.api.ApiService
 import com.example.myrecipe2.api.responsemodel.RecipeListResponse
+import com.example.myrecipe2.api.responsemodel.RecipeResponse
 import com.example.myrecipe2.model.Recipe
 import javax.inject.Inject
 
@@ -12,12 +13,11 @@ class RecipeRepository @Inject constructor(
 
     suspend fun getRandomRecipes(): List<Recipe> {
 
-        val result1 = apiService.getRandomRecipes().body()
         val result =
             apiService.getRandomRecipes().body()?.recipes?.map { mapToRecipeModel(it) } ?: listOf(
                 Recipe()
             )
-        Log.d("Caroline", "result within repo is ${result1.toString()}")
+
         return result
     }
 
@@ -28,7 +28,7 @@ class RecipeRepository @Inject constructor(
 //        return apiService.getFilteredRecipes().body()?.map{mapToRecipeModel(it)} ?: listOf(Recipe())
 //    }
 
-    fun mapToRecipeModel(response: RecipeListResponse.RecipeResponse): Recipe {
+    fun mapToRecipeModel(response: RecipeResponse): Recipe {
 
         return Recipe(
             id = response.id,

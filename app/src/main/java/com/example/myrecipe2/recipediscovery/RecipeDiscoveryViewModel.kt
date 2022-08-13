@@ -16,6 +16,7 @@ class RecipeDiscoveryViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var recipeList = emptyList<Recipe>()
+
     val recipeDiscoveryScreenStateFlow = MutableStateFlow(RecipeDiscoveryScreenState())
 
     init{
@@ -28,5 +29,18 @@ class RecipeDiscoveryViewModel @Inject constructor(
             )
             Log.d("Caroline","recipe list: ${recipeList}")
         }
+    }
+
+    fun updateSearchBarText(query: String){
+        Log.d("Caroline","update search bar is called $query")
+        viewModelScope.launch{
+            recipeDiscoveryScreenStateFlow.emit(
+                recipeDiscoveryScreenStateFlow.value.copy(
+                    recipeList = recipeList,
+                    searchQueryState = query
+                )
+            )
+        }
+        Log.d("Caroline","Screen state flow is: ${recipeDiscoveryScreenStateFlow.value.searchQueryState}")
     }
 }
