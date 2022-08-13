@@ -21,6 +21,17 @@ class RecipeRepository @Inject constructor(
         return result
     }
 
+    suspend fun searchRecipes(searchParameters: String): List<Recipe> {
+
+        val result =
+            apiService.searchRecipes(searchParameters).body()?.result?.map { mapToRecipeModel(it) } ?: listOf(
+                Recipe()
+            )
+
+        return result
+
+    }
+
     //Question: Right now, RecipeListResponse.RecipeResponse is required as the parameter type to mapToRecipeModel
     //How do I have it just RecipeResponse?
 
@@ -33,8 +44,7 @@ class RecipeRepository @Inject constructor(
         return Recipe(
             id = response.id,
             title = response.title,
-            imageUrl = response.imageUrl,
-            summary = response.summary
+            imageUrl = response.imageUrl
         )
     }
 }

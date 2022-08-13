@@ -9,14 +9,17 @@ import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -33,7 +36,8 @@ data class RecipeDiscoveryScreenState(
 @Composable
 fun RecipeDiscoveryScreen(
     recipeDiscoveryScreenState: RecipeDiscoveryScreenState,
-    updateSearchBarText: (name: String) -> Unit
+    updateSearchBarText: (name: String) -> Unit,
+    searchRecipes: (searchParameters: String) -> Unit
 ) {
 
     Log.d(
@@ -43,7 +47,8 @@ fun RecipeDiscoveryScreen(
     Column {
         RecipeDiscoverySearchHeader(
             recipeDiscoveryScreenState = recipeDiscoveryScreenState,
-            updateSearchBarText = updateSearchBarText
+            updateSearchBarText = updateSearchBarText,
+            searchRecipes = searchRecipes
         )
         LazyVerticalGrid(
             modifier = Modifier
@@ -59,10 +64,12 @@ fun RecipeDiscoveryScreen(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun RecipeDiscoverySearchHeader(
     recipeDiscoveryScreenState: RecipeDiscoveryScreenState,
-    updateSearchBarText: (name: String) -> Unit
+    updateSearchBarText: (name: String) -> Unit,
+    searchRecipes: (searchParameters: String) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -72,6 +79,8 @@ fun RecipeDiscoverySearchHeader(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
+
+        val keyboardController = LocalSoftwareKeyboardController.current
 
         TextField(
             value = recipeDiscoveryScreenState.searchQueryState,
@@ -97,6 +106,11 @@ fun RecipeDiscoverySearchHeader(
             },
             shape = RoundedCornerShape(15.dp),
             singleLine = true,
+            keyboardActions = KeyboardActions(onDone = {
+                Log.d("Caroline","done")
+                searchRecipes(recipeDiscoveryScreenState.searchQueryState)
+                keyboardController?.hide()
+            }),
             colors = TextFieldDefaults.textFieldColors(
                 textColor = MaterialTheme.colors.onPrimary,
                 cursorColor = MaterialTheme.colors.onSurface,

@@ -64,7 +64,8 @@ fun MyRecipeNavHost(
                 .recipeDiscoveryScreenStateFlow.collectAsState()
             RecipeDiscoveryScreen(
                 recipeDiscoveryScreenState = recipeDiscoveryScreenState.value,
-                updateSearchBarText = recipeDiscoveryViewModel::updateSearchBarText
+                updateSearchBarText = recipeDiscoveryViewModel::updateSearchBarText,
+                searchRecipes = recipeDiscoveryViewModel::searchForRecipe
             )
         }
     }

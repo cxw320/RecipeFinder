@@ -43,4 +43,16 @@ class RecipeDiscoveryViewModel @Inject constructor(
         }
         Log.d("Caroline","Screen state flow is: ${recipeDiscoveryScreenStateFlow.value.searchQueryState}")
     }
+
+    fun searchForRecipe(searchParameters:String){
+        viewModelScope.launch{
+            recipeList = recipeRepository.searchRecipes(searchParameters)
+            recipeDiscoveryScreenStateFlow.emit(
+                recipeDiscoveryScreenStateFlow.value.copy(
+                    recipeList = recipeList
+                )
+            )
+        }
+
+    }
 }
