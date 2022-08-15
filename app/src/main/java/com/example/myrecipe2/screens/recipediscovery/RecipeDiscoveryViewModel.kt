@@ -1,4 +1,4 @@
-package com.example.myrecipe2.recipediscovery
+package com.example.myrecipe2.screens.recipediscovery
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

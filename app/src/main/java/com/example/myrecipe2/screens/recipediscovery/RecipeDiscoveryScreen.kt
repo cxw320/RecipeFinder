@@ -1,9 +1,10 @@
-package com.example.myrecipe2.recipediscovery
+package com.example.myrecipe2.screens.recipediscovery
 
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
@@ -37,7 +38,8 @@ data class RecipeDiscoveryScreenState(
 fun RecipeDiscoveryScreen(
     recipeDiscoveryScreenState: RecipeDiscoveryScreenState,
     updateSearchBarText: (name: String) -> Unit,
-    searchRecipes: (searchParameters: String) -> Unit
+    searchRecipes: (searchParameters: String) -> Unit,
+    onRecipeClick: (recipeId: String) -> Unit
 ) {
 
     Log.d(
@@ -57,7 +59,8 @@ fun RecipeDiscoveryScreen(
         ) {
             items(recipeDiscoveryScreenState.recipeList) { recipe ->
                 RecipeCard(
-                    recipe = recipe
+                    recipe = recipe,
+                    onRecipeClick = onRecipeClick
                 )
             }
         }
@@ -127,12 +130,16 @@ fun RecipeDiscoverySearchHeader(
 
 @Composable
 fun RecipeCard(
-    recipe: Recipe
+    recipe: Recipe,
+    onRecipeClick: (recipeId: String) -> Unit
 ) {
     Column(
         modifier = Modifier
             .height(230.dp)
             .padding(5.dp)
+            .clickable{
+                onRecipeClick
+            }
     ) {
         AsyncImage(
             modifier = Modifier

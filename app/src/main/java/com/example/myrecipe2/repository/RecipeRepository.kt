@@ -32,6 +32,15 @@ class RecipeRepository @Inject constructor(
 
     }
 
+    suspend fun getIndividualRecipe(recipeId: String): Recipe {
+
+        val result =
+            apiService.searchIndividualRecipe(recipeId).body()?.let { mapToRecipeModel(it) } ?: Recipe()
+
+        return result
+
+    }
+
     //Question: Right now, RecipeListResponse.RecipeResponse is required as the parameter type to mapToRecipeModel
     //How do I have it just RecipeResponse?
 

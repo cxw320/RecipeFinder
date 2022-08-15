@@ -1,6 +1,5 @@
 package com.example.myrecipe2
 
-import android.accounts.AccountManager.get
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,24 +7,21 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.myrecipe2.recipediscovery.RecipeDiscoveryScreen
-import com.example.myrecipe2.recipediscovery.RecipeDiscoveryViewModel
+import androidx.navigation.navArgument
+import com.example.myrecipe2.screens.recipedetail.RecipeDetailScreen
+import com.example.myrecipe2.screens.recipedetail.RecipeDetailViewModel
+import com.example.myrecipe2.screens.recipediscovery.RecipeDiscoveryScreen
+import com.example.myrecipe2.screens.recipediscovery.RecipeDiscoveryViewModel
 import com.example.myrecipe2.ui.theme.MyRecipe2Theme
-import dagger.hilt.EntryPoints.get
 import dagger.hilt.android.AndroidEntryPoint
-import java.lang.reflect.Array.get
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -35,6 +31,7 @@ class MainActivity : ComponentActivity() {
 
             val navController = rememberNavController()
             val recipeDiscoveryViewModel : RecipeDiscoveryViewModel by viewModels()
+            val recipeDetailViewModel : RecipeDetailViewModel by viewModels()
 
             MyRecipe2Theme {
                 // A surface container using the 'background' color from the theme
@@ -42,7 +39,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    MyRecipeNavHost(navController,recipeDiscoveryViewModel)
+                    MyRecipeNavHost(navController,recipeDiscoveryViewModel,recipeDetailViewModel)
                 }
             }
         }
@@ -52,7 +49,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MyRecipeNavHost(
     navController: NavHostController,
-    recipeDiscoveryViewModel: RecipeDiscoveryViewModel
+    recipeDiscoveryViewModel: RecipeDiscoveryViewModel,
+    recipeDetailViewModel: RecipeDetailViewModel
 ){
     NavHost(
         navController = navController,
@@ -65,8 +63,20 @@ fun MyRecipeNavHost(
             RecipeDiscoveryScreen(
                 recipeDiscoveryScreenState = recipeDiscoveryScreenState.value,
                 updateSearchBarText = recipeDiscoveryViewModel::updateSearchBarText,
-                searchRecipes = recipeDiscoveryViewModel::searchForRecipe
+                searchRecipes = recipeDiscoveryViewModel::searchForRecipe,
+                onRecipeClick = { recipeId -> navController.navigate("${MyRecipeScreens.RECIPE_DETAIL.name}/${recipeId}")}
             )
+        }
+        composable(
+            route = "${MyRecipeScreens.RECIPE_DETAIL.name}/{recipeId}",
+            arguments = listOf(navArgument(name = "recipeId"){
+                type = NavType.StringType
+            })
+        ){
+            val recipeDetailScreenState = recipeDetailViewModel.recipeDetailScreenStateFlow.collectAsState()
+
+            recipeDetailViewModel.getRecipe(it.arguments?.getString("recipeId"))
+            RecipeDetailScreen(recipeDetailScreenState.value)
         }
     }
 
