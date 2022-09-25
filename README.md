@@ -1,1 +1,1 @@
-# MyRecipe
+# RecipeFinder
